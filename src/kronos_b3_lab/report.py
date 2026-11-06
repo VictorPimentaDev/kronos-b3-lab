@@ -33,7 +33,7 @@ def figure(result: Result, label: str = "SYNTHETIC FIXTURE · NOT MARKET PERFORM
             ax.spines[["top", "right"]].set_visible(False)
             ax.spines[["left", "bottom"]].set_color("#344551")
             ax.grid(axis="y", color="#263844", alpha=0.6)
-            ax.title.set_color("#f0f4f5")
+
             ax.yaxis.label.set_color("#b9c6d1")
         observed = result.predictions.drop_duplicates("date")
         price.plot(
@@ -45,23 +45,29 @@ def figure(result: Result, label: str = "SYNTHETIC FIXTURE · NOT MARKET PERFORM
             price.plot(
                 group["date"], group["forecast"], color=color, lw=1.2, alpha=0.85, label=name
             )
-        price.set_title("01  /  OUT-OF-SAMPLE CLOSE FORECASTS", loc="left", fontsize=11, pad=16)
+        price.set_title(
+            "01  /  OUT-OF-SAMPLE CLOSE FORECASTS", loc="left", fontsize=11, pad=16, color="#f0f4f5"
+        )
         price.set_ylabel("Close / BRL")
         price.legend(
             facecolor="#101b25", edgecolor="none", labelcolor="#dce6ed", ncols=3, fontsize=8
         )
-        for index, column in enumerate(result.equity.columns[1:]):
+        palette = dict(zip(result.metrics["model"], COLORS, strict=False))
+        palette.update({"asset-buy-hold": "#eef3f6", "ibov-buy-hold": "#8b9ba6"})
+        for column in result.equity.columns[1:]:
             is_benchmark = column.endswith("buy-hold")
             performance.plot(
                 result.equity["date"],
                 result.equity[column],
                 label=column,
-                color="#8b9ba6" if is_benchmark else COLORS[index % 5],
+                color=palette[column],
                 ls="--" if is_benchmark else "-",
                 lw=1.5,
             )
         performance.axhline(1, color="#607580", lw=0.6)
-        performance.set_title("02  /  LONG–CASH EXPERIMENT", loc="left", fontsize=11, pad=16)
+        performance.set_title(
+            "02  /  LONG–CASH EXPERIMENT", loc="left", fontsize=11, pad=16, color="#f0f4f5"
+        )
         performance.set_ylabel("Wealth / starts at 1.00")
         performance.legend(facecolor="#101b25", edgecolor="none", labelcolor="#dce6ed", fontsize=7)
         errors.barh(
@@ -70,7 +76,7 @@ def figure(result: Result, label: str = "SYNTHETIC FIXTURE · NOT MARKET PERFORM
             color=COLORS[: len(result.metrics)],
             height=0.5,
         )
-        errors.set_title("03  /  ABSOLUTE ERROR", loc="left", fontsize=11, pad=16)
+        errors.set_title("03  /  ABSOLUTE ERROR", loc="left", fontsize=11, pad=16, color="#f0f4f5")
         errors.set_xlabel("MAE / BRL · lower is better", color="#b9c6d1", fontsize=9)
         errors.invert_yaxis()
         fig.supxlabel(

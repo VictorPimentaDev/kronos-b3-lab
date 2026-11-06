@@ -53,6 +53,9 @@ class TimesFM:
     def __init__(self, context: int, horizon: int):
         import timesfm
 
+        # timesfm/__init__.py swallows ImportError, so a missing backend is a missing attribute.
+        if not hasattr(timesfm, "TimesFM_2p5_200M_torch"):
+            raise ImportError("timesfm has no torch backend; install the [timesfm] extra")
         self.model = timesfm.TimesFM_2p5_200M_torch.from_pretrained(
             "google/timesfm-2.5-200m-pytorch",
         )
@@ -82,11 +85,16 @@ class Kronos:
 
         self.torch = torch
         self.seed = seed
+        try:
+            network = Network.from_pretrained("NeoQuasar/Kronos-small")
+            tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base")
+        except TypeError as exc:
+            # The hub mixin swallows an unreachable config.json, then __init__ lacks arguments.
+            raise OSError(f"Kronos checkpoint unavailable, check network/cache: {exc}") from exc
+        # huggingface_hub 0.33.1, pinned by upstream, loads safetensors in train mode;
+        # without eval() dropout stays active and can flip the long/cash signal.
         self.predictor = KronosPredictor(
-            Network.from_pretrained("NeoQuasar/Kronos-small"),
-            KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base"),
-            device="cpu",
-            max_context=512,
+            network.eval(), tokenizer.eval(), device="cpu", max_context=512
         )
 
     def predict(self, history: pd.DataFrame, dates: pd.Series) -> np.ndarray:
@@ -119,4 +127,6 @@ def make_models(names: list[str], context: int, horizon: int, seed: int) -> list
     try:
         return [factories[name]() for name in names]
     except ImportError as exc:
-        raise RuntimeError("Optional model dependency missing; see docs/models.md") from exc
+        raise RuntimeError(
+            f"Optional model dependency missing ({exc}); see docs/models.md"
+        ) from exc

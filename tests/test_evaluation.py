@@ -124,3 +124,19 @@ def test_invalid_model_output_is_not_silently_replaced(output):
 def test_duplicate_model_names_rejected():
     with pytest.raises(ValueError, match="unique"):
         evaluate(*demo_candles(), [Recorder(), Recorder()])
+
+
+@pytest.mark.parametrize(
+    "dates",
+    [
+        ["2025-01-02T00:00:00-03:00", "2025-01-03T00:00:00-02:00"],
+        ["2025-01-02T00:00:00Z", "2025-01-03T00:00:00Z"],
+        ["2025-01-02T10:00:00", "2025-01-03T10:00:00"],
+    ],
+)
+def test_non_daily_or_timezone_dates_are_rejected_cleanly(dates):
+    asset, _ = demo_candles()
+    asset = asset.iloc[:2].copy()
+    asset["date"] = dates
+    with pytest.raises(ValueError, match="timezone-free daily"):
+        validate_candles(asset)

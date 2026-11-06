@@ -20,7 +20,11 @@ def validate_candles(frame: pd.DataFrame) -> pd.DataFrame:
     if frame.empty or frame["date"].isna().any():
         raise ValueError("Candles must contain dated rows")
     dates = frame["date"]
-    if dates.dt.tz is not None or not dates.equals(dates.dt.normalize()):
+    if (
+        not pd.api.types.is_datetime64_any_dtype(dates)
+        or dates.dt.tz is not None
+        or not dates.equals(dates.dt.normalize())
+    ):
         raise ValueError("Use timezone-free daily session dates")
     if dates.duplicated().any() or not dates.is_monotonic_increasing:
         raise ValueError("Dates must be unique and strictly increasing")

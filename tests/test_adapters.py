@@ -94,6 +94,9 @@ def test_kronos_contract_includes_calendar_but_no_future_ohlcv(monkeypatch):
         def from_pretrained(cls, name):
             return cls()
 
+        def eval(self):
+            return self
+
     class Predictor:
         def __init__(self, network, tokenizer, device, max_context):
             assert device == "cpu" and max_context == 512

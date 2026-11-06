@@ -39,8 +39,11 @@ not to cherry-pick the best result.
 
 ```sh
 pip install -e '.[timesfm]'
-b3-lab run --models seasonal-naive,random-walk,timesfm --context 150 --horizon 3 --out runs/timesfm
+b3-lab run --models seasonal-naive,random-walk,timesfm --context 160 --horizon 3 --out runs/timesfm
 ```
+
+Upstream rounds context up to a multiple of 32 and left-pads shorter inputs with zeros,
+which also enter its input normalization. Multiples of 32, like 160, avoid that padding.
 
 The package range deliberately stays on `timesfm>=2,<3`; the adapter targets the
 2.5 checkpoint. It compiles the upstream forecast configuration once and reuses
@@ -56,6 +59,7 @@ Upstream uses a top-level `model` package, not an ordinary PyPI package named
 
 ```sh
 git clone https://github.com/shiyu-coder/Kronos.git ../Kronos
+pip install -e .
 pip install -r ../Kronos/requirements.txt
 PYTHONPATH="../Kronos" b3-lab run --models seasonal-naive,random-walk,kronos --context 150 --horizon 3 --out runs/kronos
 ```
@@ -71,8 +75,9 @@ observed exchange turnover. Source MIT does not automatically cover every checkp
 
 ## Verification boundary
 
-CI exercises contracts with explicit test doubles and never downloads model
-weights. `manifest.json` records package versions, parameters and input hashes.
+[The model smoke guide](model-smoke.md) has clean-environment steps, resource use,
+real-weight results and what they do not prove. CI exercises contracts with explicit
+test doubles and never downloads model weights. `manifest.json` records package versions, parameters and input hashes.
 Upstream revisions and Hugging Face revisions are not pinned automatically: record
 resolved revisions and hardware separately for a publishable experiment. A mock
 contract pass is not proof of compatibility with every upstream version, and no

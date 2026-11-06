@@ -55,7 +55,7 @@ there is no silent fallback to a baseline.
 | Evidence | MAE, RMSE, sMAPE, MASE, paper return and window-end drawdown |
 | Interfaces | CLI, Streamlit, CSV/JSON exports and headless matplotlib |
 
-[Install and run the real models →](docs/models.md) · [Verification evidence →](docs/verification/README.md)
+[Install and run the real models →](docs/models.md) · [Real-weight smoke guide →](docs/model-smoke.md) · [Verification evidence →](docs/verification/README.md)
 
 ## Bring B3 candles
 

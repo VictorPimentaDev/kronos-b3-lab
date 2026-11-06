@@ -1,0 +1,27 @@
+{
+  "label": "SYNTHETIC FIXTURE \u00b7 NOT MARKET PERFORMANCE",
+  "config": {
+    "context": 160,
+    "horizon": 3,
+    "cost_bps": 10,
+    "seed": 42
+  },
+  "versions": {
+    "kronos-b3-lab": "0.1.0",
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "torch": "2.15.0",
+    "timesfm": "2.0.2"
+  },
+  "models": [
+    "seasonal-naive",
+    "random-walk",
+    "timesfm-2.5-200m"
+  ],
+  "asset_sha256": "48128286d604f0956a36c18a3b64eb7b6c55a04f4bedcad6eec68537cbcd3fb1",
+  "ibov_sha256": "05a2626fdd9a477d82d46887394fccf1bc40d590dd812e2624e59e1b5a416c7c",
+  "first_origin": "2025-08-13 00:00:00",
+  "last_target": "2025-09-08 00:00:00",
+  "protocol": "disjoint windows; forecast at close; enter next open; liquidate last close",
+  "disclaimer": "Research only. Not investment advice. See README for limitations."
+}

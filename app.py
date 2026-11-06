@@ -28,7 +28,7 @@ with st.sidebar:
     costs = st.number_input("Cost / bps per side", min_value=0.0, max_value=1000.0, value=10.0)
     asset_file = st.file_uploader("Asset candles (optional)", type="csv")
     ibov_file = st.file_uploader("IBOV candles (required with asset)", type="csv")
-    run = st.button("Run experiment", type="primary", use_container_width=True)
+    run = st.button("Run experiment", type="primary", width="stretch")
 
 if run or "result" not in st.session_state:
     import pandas as pd
@@ -67,7 +67,7 @@ chart = figure(result, st.session_state["label"])
 st.pyplot(chart)
 plt.close(chart)
 st.subheader("Evidence, before conclusions")
-st.dataframe(result.metrics, hide_index=True, use_container_width=True)
+st.dataframe(result.metrics, hide_index=True, width="stretch")
 st.download_button(
     "Download forecasts · CSV",
     result.predictions.to_csv(index=False),

@@ -12,7 +12,8 @@ implementation or weights are vendored. Sources checked on 2026-11-06:
 These are particular model versions, not a claim to support every release. Kronos
 gets richer inputs than the two univariate adapters; treat this as a comparison
 of complete forecasting systems, not a controlled architecture benchmark.
-The CPU paths avoid a mandatory GPU. Context defaults to 60 sessions; Kronos-small
+Chronos and Kronos explicitly use CPU. TimesFM uses upstream device selection:
+CUDA when available, CPU otherwise; no GPU is mandatory. Context defaults to 60 sessions; Kronos-small
 is limited to 512 and this lab caps every horizon at 64.
 
 ## Chronos: small real inference path
@@ -62,8 +63,9 @@ PYTHONPATH="../Kronos" b3-lab run --models seasonal-naive,random-walk,kronos --c
 Run from the lab root, record `git -C ../Kronos rev-parse HEAD`, and inspect upstream
 requirements before installing. The adapter uses five sampled paths, temperature
 1.0, top-p 0.9 and CPU. It passes actual evaluation session dates, never fabricated
-weekday calendars or future candles. It does not invent the optional turnover
-`amount` field. Source MIT does not automatically cover every checkpoint; review
+weekday calendars or future candles. The adapter omits the optional turnover `amount` field. Upstream Kronos then
+approximates it as volume × mean(OHLC); this is a synthetic turnover proxy, not
+observed exchange turnover. Source MIT does not automatically cover every checkpoint; review
 [upstream](https://github.com/shiyu-coder/Kronos) and the
 [model card](https://huggingface.co/NeoQuasar/Kronos-small) for your intended use.
 

@@ -4,9 +4,10 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+import pytest
 from streamlit.testing.v1 import AppTest
 
-from kronos_b3_lab.data import demo_candles
+from kronos_b3_lab.data import demo_candles, fetch_yahoo
 from kronos_b3_lab.evaluation import evaluate
 from kronos_b3_lab.models import SeasonalNaive
 from kronos_b3_lab.report import save_result
@@ -55,3 +56,11 @@ def test_streamlit_default_and_rerun():
     assert not app.exception
     assert app.metric[1].value == "12"
     assert "SYNTHETIC" in app.session_state["label"]
+
+
+def test_fetch_rejects_sidecar_collision_before_network_or_overwrite(tmp_path):
+    output = tmp_path / "candles.json"
+    output.write_text("existing evidence")
+    with pytest.raises(ValueError, match=".csv output path"):
+        fetch_yahoo("WEGE3.SA", "2024-01-01", "2025-01-01", output)
+    assert output.read_text() == "existing evidence"

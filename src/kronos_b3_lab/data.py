@@ -52,10 +52,12 @@ def demo_candles() -> tuple[pd.DataFrame, pd.DataFrame]:
 
 def fetch_yahoo(ticker: str, start: str, end: str, output: Path) -> None:
     """Download explicit adjusted daily candles; store provenance alongside CSV."""
-    import yfinance as yf
-
+    if output.suffix.lower() != ".csv":
+        raise ValueError("Use a .csv output path; the JSON sidecar stores provenance separately")
     if not ticker.endswith(".SA") and ticker != "^BVSP":
         raise ValueError("Use a B3 Yahoo symbol such as WEGE3.SA, or ^BVSP")
+    import yfinance as yf
+
     frame = yf.download(
         ticker,
         start=start,

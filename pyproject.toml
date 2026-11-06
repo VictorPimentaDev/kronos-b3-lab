@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kronos-b3-lab"
+version = "0.1.0"
+description = "An honest rolling-origin lab for foundation-model forecasts on Brazilian candles"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Victor Pimenta"}]
+dependencies = ["numpy>=1.26,<3", "pandas>=2.2,<3", "matplotlib>=3.9,<4"]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.42,<2"]
+data = ["yfinance>=0.2.54,<1"]
+chronos = ["chronos-forecasting>=2,<3", "torch>=2.2,<3"]
+timesfm = ["timesfm[torch]>=2,<3"]
+dev = ["pytest>=8,<10", "ruff>=0.9,<1", "build>=1.2,<2"]
+
+[project.scripts]
+b3-lab = "kronos_b3_lab.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
